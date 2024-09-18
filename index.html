@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body class="bg-gray-100 your_css_selector_here">
+    <div>
+        <header class="bg-blue-600 text-white p-4 md:p-6">
+            <h1 class="text-xl md:text-3xl font-bold">Gestión de Productos V2</h1>
+        </header><br>
+        <h1 class="text-3xl text-white font-bold mb-6 text-center">Lista de Productos</h1>
+        
+        <!-- Botones para abrir popups -->
+        <div class="flex justify-center space-x-4 mb-4">
+            <button id="addProductButton" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Agregar Producto</button>
+
+            <button id="openEditPopup" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Editar Producto</button>
+
+            <button id="searchButton" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+                Buscar Producto
+            </button>
+        </div>
+
+        <!-- Tabla de productos -->
+<div class="overflow-x-auto text-white shadow-md rounded-lg mb-6 m-5">
+    <table class="min-w-full table-auto">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Código de Barra</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Descripción</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Marca</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Categoría</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Precio</th>
+                <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="product-list" class="">
+            <!-- Los productos se agregarán aquí -->
+        </tbody>
+    </table>
+</div>
+
+
+    <!-- Popup para agregar producto -->
+<div id="addPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+      <div class="mt-3 text-center">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Agregar Producto</h2>
+        <form id="product-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="mb-4">
+            <label for="codigoBarra" class="block text-sm font-medium text-gray-700 mb-2">Código de Barra</label>
+            <input type="text" id="codigoBarra" name="codigoBarra" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="mb-4">
+            <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+            <input type="text" id="descripcion" name="descripcion" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="mb-4">
+            <label for="marca" class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+            <input type="text" id="marca" name="marca" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="mb-4">
+            <label for="idCategoria" class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+            <input type="number" id="idCategoria" name="idCategoria" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="mb-4 md:col-span-2">
+            <label for="precio" class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
+            <input type="number" id="precio" name="precio" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          
+          <div class="flex justify-end space-x-4 md:col-span-2">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              Agregar Producto
+            </button>
+            <button type="button" id="closePopupButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              Cerrar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup para editar producto -->
+  <div id="editPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Editar Producto</h2>
+            <form id="edit-product-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="mb-4">
+                    <label for="idProducto" class="block text-sm font-medium text-gray-700 mb-2">ID Producto</label>
+                    <input type="number" id="idProducto" name="idProducto" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="codigoBarra" class="block text-sm font-medium text-gray-700 mb-2">Código de Barra</label>
+                    <input type="text" id="codigoBarra" name="codigoBarra" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                    <input type="text" id="descripcion" name="descripcion" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="marca" class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                    <input type="text" id="marca" name="marca" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="idCategoria" class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                    <input type="number" id="idCategoria" name="idCategoria" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4 md:col-span-2">
+                    <label for="precio" class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
+                    <input type="number" id="precio" name="precio" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex justify-end space-x-4 md:col-span-2">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Guardar Cambios
+                    </button>
+                    <button type="button" id="closeEditPopupButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Cerrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Popup para buscar producto -->
+    <div id="searchPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Buscar Producto</h3>
+            <input id="searchProductId" type="text" placeholder="ID del producto" class="w-full p-2 mb-4 border rounded">
+            <button id="searchProduct" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Buscar</button>
+            <button id="closeSearchPopup" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">Cerrar</button>
+            <div id="searchResult" class="mt-4"></div>
+        </div>
+    </div>
+
+    <script src="js/index.js"></script>
+    <script src="js/guardar.js"></script>
+    <script src="js/editarproducto.js"></script>
+    
+</body>
+</html>
